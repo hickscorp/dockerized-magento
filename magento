@@ -11,15 +11,17 @@ shift
 parameters=$@
 fi
 
+export DOCKERHOST=$(ifconfig | grep -E "([0-9]{1,3}\.){3}[0-9]{1,3}" | grep -v 127.0.0.1 | awk '{ print $2 }' | cut -f2 -d: | head -n1)
+
 # Paths
 SCRIPTNAME=`basename $0`
 SCRIPTPATH=$(readlink -f "$0" 2>/dev/null)
 if [ "$?" != 0 ]; then
-    if [ ! -f "docker-compose.yml" ]; then
+  if [ ! -f "docker-compose.yml" ]; then
 	>&2 echo " The $SCRIPTNAME-script will only work (on Mac OS) if you execute it from the project directory itself."
 	exit 1
-    fi
-    SCRIPTPATH="$(pwd -P)/$SCRIPTNAME"
+  fi
+  SCRIPTPATH="$(pwd -P)/$SCRIPTNAME"
 fi
 PROJECTPATH=$(dirname "$SCRIPTPATH")
 
@@ -30,15 +32,15 @@ cd $PROJECTPATH
 DOCKER=`which docker`
 if [ -z "$DOCKER" ];
 then
-    echo "'docker' was not found on your system." >&2
-    exit 1
+  echo "'docker' was not found on your system." >&2
+  exit 1
 fi
 
 DOCKERCOMPOSE=`which docker-compose`
 if [ -z "$DOCKERCOMPOSE" ];
 then
-    echo "'docker-compose' was not found on your system." >&2
-    exit 1
+  echo "'docker-compose' was not found on your system." >&2
+  exit 1
 fi
 
 # Utils
@@ -49,188 +51,187 @@ SED=`which sed`
 #########################################################################
 # Get the full container name for the given container type (e.g. "php")
 # Arguments:
-#  CONTAINER_TYPE
+# CONTAINER_TYPE
 # Returns:
-#  The full name of the (first) container with the given type
+# The full name of the (first) container with the given type
 #########################################################################
 getContainerNameByType() {
-    # abort if no type is specified
-    local CONTAINER_TYPE="$1"
-    if [ -z "$CONTAINER_TYPE" ];
-    then
-        echo "No container type specified. Please specifiy a container type (e.g. php, installer, mysql, nginx, ...)."  >&2
-        return 1
-    fi
+  # abort if no type is specified
+  local CONTAINER_TYPE="$1"
+  if [ -z "$CONTAINER_TYPE" ];
+  then
+    echo "No container type specified. Please specifiy a container type (e.g. php, installer, mysql, nginx, ...)." >&2
+    return 1
+  fi
 
-    # check if xargs is available
-    if [ -z "$XARGS" ];
-    then
-        echo "The tool 'xargs' was not found on your system." >&2
-        return 1
-    fi
+  # check if xargs is available
+  if [ -z "$XARGS" ];
+  then
+    echo "The tool 'xargs' was not found on your system." >&2
+    return 1
+  fi
 
-    # check if grep is available
-    if [ -z "$GREP" ];
-    then
-        echo "The tool 'grep' was not found on your system." >&2
-        return 1
-    fi
+  # check if grep is available
+  if [ -z "$GREP" ];
+  then
+    echo "The tool 'grep' was not found on your system." >&2
+    return 1
+  fi
 
-    # check if sed is available
-    if [ -z "$SED" ];
-    then
-        echo "The tool 'sed' was not found on your system." >&2
-        return 1
-    fi
+  # check if sed is available
+  if [ -z "$SED" ];
+  then
+    echo "The tool 'sed' was not found on your system." >&2
+    return 1
+  fi
 
-    local containerName=$($DOCKER ps -q | $XARGS $DOCKER inspect --format '{{.Name}}' | $GREP "$CONTAINER_TYPE" | $SED 's:/::' | $GREP "$CONTAINER_TYPE_1")
-    echo $containerName
-    return 0
+  local containerName=$($DOCKER ps -q | $XARGS $DOCKER inspect --format '{{.Name}}' | $GREP "$CONTAINER_TYPE" | $SED 's:/::' | $GREP "$CONTAINER_TYPE_1")
+  echo $containerName
+  return 0
 }
 
 executeMagerun() {
-    local containerType="installer"
-    local containerName=$(getContainerNameByType "$containerType")
-    if [ -z "$containerName" ];
-    then
-        echo "Cannot determine the name of the container." >&2
-        return 1
-    fi
+  local containerType="installer"
+  local containerName=$(getContainerNameByType "$containerType")
+  if [ -z "$containerName" ];
+  then
+    echo "Cannot determine the name of the container." >&2
+    return 1
+  fi
 
-    $DOCKER exec -ti $containerName magerun --skip-root-check --root-dir="/var/www/html/web" $@
-    return 0
+  $DOCKER exec -ti $containerName magerun --skip-root-check --root-dir="/var/www/html/web" $@
+  return 0
 }
 
 executeComposer() {
-    local containerType="installer"
-    local containerName=$(getContainerNameByType $containerType)
-    if [ -z "$containerName" ];
-    then
-        echo "Cannot determine the name of the container." >&2
-        return 1
-    fi
+  local containerType="installer"
+  local containerName=$(getContainerNameByType $containerType)
+  if [ -z "$containerName" ];
+  then
+    echo "Cannot determine the name of the container." >&2
+    return 1
+  fi
 
-    $DOCKER exec $containerName composer --working-dir="/var/www/html" $@
-    return 0
+  $DOCKER exec $containerName composer --working-dir="/var/www/html" $@
+  return 0
 }
 
 enterContainer() {
-    local containerType="$1"
-    if [ -z "$containerType" ];
-    then
-        echo "No container type specified. Please specifiy a container type (e.g. php, installer, mysql, nginx, ...)."  >&2
-        return 1
-    fi
+  local containerType="$1"
+  if [ -z "$containerType" ];
+  then
+    echo "No container type specified. Please specifiy a container type (e.g. php, installer, mysql, nginx, ...)." >&2
+    return 1
+  fi
 
-    local containerName=$(getContainerNameByType $containerType)
-    if [ -z "$containerName" ];
-    then
-        echo "Cannot determine the name of the container." >&2
-        return 1
-    fi
+  local containerName=$(getContainerNameByType $containerType)
+  if [ -z "$containerName" ];
+  then
+    echo "Cannot determine the name of the container." >&2
+    return 1
+  fi
 
-    $DOCKER exec -ti $containerName bash
-    return 0
+  $DOCKER exec -ti $containerName bash
+  return 0
 }
 
 start() {
-    $DOCKERCOMPOSE up -d && $DOCKERCOMPOSE logs
+  $DOCKERCOMPOSE up -d && $DOCKERCOMPOSE logs
 }
 
 stop() {
-    $DOCKERCOMPOSE stop
+  $DOCKERCOMPOSE stop
 }
 
 restart() {
-    $DOCKERCOMPOSE restart
-    executeMagerun cache:clean
+  $DOCKERCOMPOSE restart
+  executeMagerun cache:clean
 }
 
 status() {
-    $DOCKERCOMPOSE ps
+  $DOCKERCOMPOSE ps
 }
 
 stats() {
-    # check if sed is available
-    if [ -z "$SED" ];
-    then
-        echo "Stats requires 'sed'. The tool was not found on your system." >&2
-        return 1
-    fi
+  # check if sed is available
+  if [ -z "$SED" ];
+  then
+    echo "Stats requires 'sed'. The tool was not found on your system." >&2
+    return 1
+  fi
 
-    $DOCKER ps -q | $XARGS $DOCKER inspect --format '{{.Name}}' | $SED 's:/::' | $XARGS $DOCKER stats
+  $DOCKER ps -q | $XARGS $DOCKER inspect --format '{{.Name}}' | $SED 's:/::' | $XARGS $DOCKER stats
 }
 
 magerun() {
-    executeMagerun $parameters
+  executeMagerun $parameters
 }
 
 composer() {
-    executeComposer $parameters
+  executeComposer $parameters
 }
 
 enter() {
-    enterContainer $parameters
+  enterContainer $parameters
 }
 
 destroy() {
-    $DOCKERCOMPOSE stop
-    $DOCKERCOMPOSE rm --force
-    rm -rf $PROJECTPATH/web $PROJECTPATH/db $PROJECTPATH/vendor
+  $DOCKERCOMPOSE stop
+  $DOCKERCOMPOSE rm --force
+  rm -rf $PROJECTPATH/web $PROJECTPATH/db $PROJECTPATH/vendor
 }
 
 case "$action" in
-    start)
-    start
-    ;;
+  start)
+  start
+  ;;
 
-    stop)
-    stop
-    ;;
+  stop)
+  stop
+  ;;
 
-    restart)
-    restart
-    ;;
+  restart)
+  restart
+  ;;
 
-    status)
-    status
-    ;;
+  status)
+  status
+  ;;
 
-    stats)
-    stats
-    ;;
+  stats)
+  stats
+  ;;
 
-    magerun)
-    magerun
-    ;;
+  magerun)
+  magerun
+  ;;
 
-    composer)
-    composer
-    ;;
+  composer)
+  composer
+  ;;
 
-    enter)
-    enter
-    ;;
+  enter)
+  enter
+  ;;
 
-    destroy)
-    destroy
-    ;;
+  destroy)
+  destroy
+  ;;
 
-    *)
-    echo "usage : $0 start|stop|restart|status|stats|magerun|composer|enter|destroy
-
-  start      Starts the docker containers (and triggers the
-             installation if magento is not yet installed)
-  stop       Stops all docker containers
-  restart    Restarts all docker containers
-  status     Prints the status of all docker containers
-  stats      Displays live resource usage statistics of all containers
-  magerun    Executes magerun in the magento root directory
-  composer   Executes composer in the magento root directory
-  enter      Enters the bash of a given container type (e.g. php, mysql)
-  destroy    Stops all containers and removes all data
+  *)
+  echo "usage : $0 start|stop|restart|status|stats|magerun|composer|enter|destroy
+ start    Starts the docker containers (and triggers the
+          installation if magento is not yet installed)
+ stop     Stops all docker containers
+ restart  Restarts all docker containers
+ status   Prints the status of all docker containers
+ stats    Displays live resource usage statistics of all containers
+ magerun  Executes magerun in the magento root directory
+ composer Executes composer in the magento root directory
+ enter    Enters the bash of a given container type (e.g. php, mysql)
+ destroy  Stops all containers and removes all data
 "
-    ;;
+  ;;
 esac
 
 exit 0

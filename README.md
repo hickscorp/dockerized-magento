@@ -165,12 +165,6 @@ installer:
     DOMAIN: dockerized-magento.local
 ```
 
-### Using a different SSL certificate
-
-By default I chose a dummy certificate ([config/ssl/cert.pem](config/ssl/cert.pem)).
-If you want to use a different certificate you can just override the key and cert with your own certificates.
-
-
 ### Adapt Magento Installation Parameters
 
 If you want to install Magento using your own admin-user or change the password, email-adreess or name you can change the environment variable of the **installer** that begin with `ADMIN_`:

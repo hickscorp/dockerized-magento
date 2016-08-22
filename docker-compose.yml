@@ -14,6 +14,7 @@ installer:
     ADMIN_FRONTNAME: admin
     ADMIN_EMAIL: admin@example.com
     ENCRYPTIONKEY: 731aea833710535779fe8c7c49bc6c4d
+    MAGE_IS_DEVELOPER_MODE: 1
   volumes_from:
     - nginx
   links:
@@ -22,6 +23,8 @@ installer:
     - "fullpagecache:redisfullpagecache"
     - "solr:solr"
     - "mysql:mysql"
+  extra_hosts:
+    - "dockerhost:$DOCKERHOST"
 
 nginx:
   image: nginx:latest
@@ -40,6 +43,8 @@ nginx:
     - ./data/config/nginx/custom-locations:/etc/nginx/custom-locations
   volumes_from:
     - php
+  environment:
+    MAGE_IS_DEVELOPER_MODE: 1
 
 php:
   build: docker-images/magento_php
@@ -51,6 +56,10 @@ php:
     - "mysql:mysql"
   volumes:
     - ./data/root:/var/www/html
+  extra_hosts:
+    - "dockerhost:$DOCKERHOST"
+  environment:
+    MAGE_IS_DEVELOPER_MODE: 1
 
 mysql:
   image: mysql:5.5
