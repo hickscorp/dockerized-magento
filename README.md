@@ -2,6 +2,9 @@
 
 A dockerized version of "Magento Community Edition 1.9.x"
 
+**NOTE:** This project was initially forked from (that repository)[https://github.com/andreaskoch/dockerized-magento], however that original project wasn't working for me out of the box. As I started changing lots of files, I decided to remodel it a little bit and it now is a quite different shape. Most of the code / files present here are copyrighted Andreas Koch "Andyk", as stated in the [license](LICENSE).
+
+
 ## Requirements
 
 If you are on Linux you should install
@@ -11,9 +14,11 @@ If you are on Linux you should install
 
 If you are running on [Mac OS](https://docs.docker.com/engine/installation/mac/) or [Windows](https://docs.docker.com/engine/installation/windows/) you can install the [Docker Toolbox](https://docs.docker.com/engine/installation/mac/) which contains docker, docker-compose and docker-machine.
 
+
 ## Preparations
 
 The web-server will be bound to your local ports 80 and 443. In order to access the shop you must add a hosts file entry for `dockerized-magento.local`.
+
 
 ### For Linux Users
 
@@ -22,8 +27,9 @@ If you are using docker **natively** you can use this command:
 
 ```bash
 sudo su
-echo "127.0.0.1    dockerized-magento.local" >> /etc/hosts
+echo "127.0.0.1 dockerized-magento.local" >> /etc/hosts
 ```
+
 
 ### For Mac Users
 
@@ -31,11 +37,9 @@ If you are using [docker-machine](https://github.com/docker/machine) you need to
 
 ```bash
 docker-machine ls
-docker-machine ip <name-of-your-docker-machine>
-```
+REMOTE_IP=`docker-machine ip <name-of-your-docker-machine>`
 
-```bash
-echo "192.168.99.100    dockerized-magento.local" >> /etc/hosts
+echo "$REMOTE_IP dockerized-magento.local" >> /etc/hosts
 ```
 
 **docker-machine performance**
@@ -57,6 +61,7 @@ Thanks to [René Penner](https://github.com/renepenner/magento-docker-boilerplat
 ### For Windows Users
 
 I suppose it will work on Windows, but I have not tested it. And I suspect that the performance will not be great due to the slow file-sharing protocol between the Windows hosts and the VirtualBox VM.
+
 
 ## Installation
 
@@ -90,9 +95,8 @@ installer_1     |  - Username: admin
 installer_1     |  - Password: password123
 ```
 
-[![Animation: Installation and first project start](documentation/installation-and-first-start-animation.gif)](https://s3.amazonaws.com/andreaskoch/dockerized-magento/installation/Dockerized-Magento-Installation-Linux-no-sound.mp4)
-
 **Note**: The build process and the installation process will take a while if you start the project for the first time. After that, starting and stoping the project will be a matter of seconds.
+
 
 ## Usage
 
@@ -116,7 +120,9 @@ You can control the project using the built-in `magento`-script which is basical
 
 **Note**: The `magento`-script is just a small wrapper around `docker-compose`. You can just use [docker-compose](https://docs.docker.com/compose/) directly.
 
+
 ## Components
+
 
 ### Overview
 
@@ -133,15 +139,10 @@ The dockerized Magento project consists of the following components:
 - a [composer-file](composer.json) for managing the **Magento modules**
 - and the [docker-compose.yml](docker-compose.yml)-file which connects all components
 
-The component-diagram should give you a general idea* how all components of the "dockerized Magento" project are connected:
-
-[![Dockerized Magento: Component Diagram](documentation/dockerized-magento-component-diagram.png)](documentation/dockerized-magento-component-diagram.svg)
-
-`*` The diagram is just an attempt to visualize the dependencies between the different components. You can get the complete picture by studying the docker-compose file:  [docker-compose.yml](docker-compose.yml)
-
-Even though the setup might seem complex, the usage is thanks to docker really easy.
+Even though the setup might seem complex, the usage is really easy thanks to docker.
 
 If you are interested in a **guide on how to dockerize a Magento** shop yourself you can have a look at a blog-post of mine: [Dockerizing  Magento](https://andykdocs.de/development/Docker/Dockerize-Magento) on [AndyK Docs](https://andykdocs.de)
+
 
 ## Custom Configuration
 
@@ -152,6 +153,7 @@ If you have started the shop before you must **repeat the installation process**
 1. Modify the parameters in the `docker-compose.yml`
 2. Shutdown the containers and remove all data (`./magento destroy`)
 3. Start the containers again (`./magento start`)
+
 
 ### Changing the domain name
 
@@ -167,6 +169,7 @@ installer:
 
 By default I chose a dummy certificate ([config/ssl/cert.pem](config/ssl/cert.pem)).
 If you want to use a different certificate you can just override the key and cert with your own certificates.
+
 
 ### Adapt Magento Installation Parameters
 
@@ -190,6 +193,7 @@ installer:
 		ADMIN_FRONTNAME: admin
 		ADMIN_EMAIL: admin@example.com
 ```
+
 
 ### Change the MySQL Root User Password
 
