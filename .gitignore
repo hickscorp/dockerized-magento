@@ -1,7 +1,6 @@
-web
-composer.lock
-composer.phar
-vendor
-db
-.vagrant
-.DS_Store
+data/logs
+data/mysql
+data/root/web
+data/root/vendor
+data/root/composer.lock
+data/root/composer.phar
