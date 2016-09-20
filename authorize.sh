@@ -1,8 +1,8 @@
 #!/bin/sh
 
-SERVER="http://dockerized-magento.local"
-CONSUMER_KEY=a177218da8fa124f918db9a6ec101562
-CONSUMER_SECRET=6b96bbbf552551ae2562d5bb60bc411f
+SERVER=$1
+CONSUMER_KEY=$2
+CONSUMER_SECRET=$3
 
 oauth --verbose \
       --query-string \
