@@ -136,7 +136,9 @@ enterContainer() {
 }
 
 start() {
-  $DOCKERCOMPOSE up -d && $DOCKERCOMPOSE logs
+  $DOCKERCOMPOSE up -d
+  NGINXHOST=$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' magento_nginx_1)
+  $DOCKERCOMPOSE logs
 }
 
 stop() {
