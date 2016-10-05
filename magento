@@ -136,8 +136,11 @@ enterContainer() {
 start() {
   export DOCKERHOST=$(ifconfig | grep -E "([0-9]{1,3}\.){3}[0-9]{1,3}" | grep -v 127.0.0.1 | awk '{ print $2 }' | cut -f2 -d: | head -n1)
   $DOCKERCOMPOSE up -d
-  export NGINXHOST=$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' magento_nginx_1)
-  $DOCKERCOMPOSE logs
+  NGINXHOST=$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' magento_nginx_1)
+  echo "Done!"
+  echo "  Snappic API Host: ${SNAPPIC_API_HOST}."
+  echo "  Snappic Front Assets Host: ${SNAPPIC_FRONT_ASSETS_HOST}"
+  echo "  nginx is running on ${NGINXHOST}.";
 }
 
 stop() {
