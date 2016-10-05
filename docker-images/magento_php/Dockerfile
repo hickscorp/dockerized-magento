@@ -19,3 +19,5 @@ RUN set -x && \
     chmod +x /usr/local/bin/magerun && \
     apt-get purge -y $BUILD_DEPS && apt-get autoremove -y --purge && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /var/www/html/* /tmp/xdebug
+
+RUN echo "clear_env = no" >> /usr/local/etc/php-fpm.conf
