@@ -18,5 +18,4 @@ RUN set -x && \
     curl -o /usr/local/bin/magerun https://raw.githubusercontent.com/netz98/n98-magerun/master/n98-magerun.phar && \
     chmod +x /usr/local/bin/magerun && \
     apt-get purge -y $BUILD_DEPS && apt-get autoremove -y --purge && \
-    apt-get clean && rm -rf /var/lib/apt/lists/* /var/www/html/* /tmp/xdebug \
-    echo "clear_env = no" >> /usr/local/etc/php-fpm.conf
+    apt-get clean && rm -rf /var/lib/apt/lists/* /var/www/html/* /tmp/xdebug
