@@ -1,10 +1,19 @@
-version '1'
-
 installer:
-  image: doodloo/magento_installer:latest
-  # build: docker-images/magento_installer
+  # image: doodloo/magento_installer:latest
+  build: docker-images/magento_installer
+  volumes_from:
+    - nginx
+  links:
+    - "cache:rediscache"
+    - "sessions:redissession"
+    - "fullpagecache:redisfullpagecache"
+    - "solr:solr"
+    - "mysql:mysql"
+  extra_hosts:
+    - "dockerhost:$DOCKERHOST"
   environment:
     DOMAIN: dockerized-magento.local
+    MAGE_IS_DEVELOPER_MODE: 1
     MAGENTO_ROOT: /var/www/html/web
     MYSQL_HOST: mysql
     MYSQL_DATABASE: magento
@@ -17,18 +26,6 @@ installer:
     ADMIN_FRONTNAME: admin
     ADMIN_EMAIL: admin@example.com
     ENCRYPTIONKEY: 731aea833710535779fe8c7c49bc6c4d
-  volumes_from:
-    - nginx
-  links:
-    - "cache:rediscache"
-    - "sessions:redissession"
-    - "fullpagecache:redisfullpagecache"
-    - "solr:solr"
-    - "mysql:mysql"
-  extra_hosts:
-    - "dockerhost:$DOCKERHOST"
-  environment:
-    MAGE_IS_DEVELOPER_MODE: 1
     SNAPPIC_API_HOST: $SNAPPIC_API_HOST
     SNAPPIC_STORE_ASSETS_HOST: $SNAPPIC_STORE_ASSETS_HOST
 
