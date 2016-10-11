@@ -138,7 +138,7 @@ printInfo() {
   local containerName=$(getContainerNameByType "nginx")
   local nginxHost=$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' $containerName)
   echo "  -> Done!"
-  echo "  ->   nginx is running on ${containerName}.";
+  echo "  ->   nginx is running on ${containerName} at ${nginxHost}.";
   echo "  ->   Snappic API Host: ${SNAPPIC_API_HOST}."
   echo "  ->   Snappic Front Assets Host: ${SNAPPIC_STORE_ASSETS_HOST}"
 }
