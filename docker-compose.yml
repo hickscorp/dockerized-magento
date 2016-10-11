@@ -1,6 +1,8 @@
 installer:
   # image: doodloo/magento_installer:latest
   build: docker-images/magento_installer
+  volumes:
+    - ./data/github_token.json:/root/.composer/auth.json
   volumes_from:
     - nginx
   links:
