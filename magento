@@ -141,6 +141,7 @@ printInfo() {
   echo "  ->   nginx is running on ${containerName} at ${nginxHost}.";
   echo "  ->   Snappic API Host: ${SNAPPIC_API_HOST}."
   echo "  ->   Snappic Front Assets Host: ${SNAPPIC_STORE_ASSETS_HOST}"
+  echo "  ->   Add \"${nginxHost} dockerized-magento.local\" to the php container hosts file."
 }
 
 start() {
