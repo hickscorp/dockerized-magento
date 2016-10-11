@@ -1,4 +1,4 @@
-FROM magento_php
+FROM doodloo/magento_php
 
 COPY files /
 

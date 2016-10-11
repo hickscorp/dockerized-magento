@@ -1,5 +1,8 @@
+version '1'
+
 installer:
-  build: docker-images/magento_installer
+  image: doodloo/magento_installer:latest
+  # build: docker-images/magento_installer
   environment:
     DOMAIN: dockerized-magento.local
     MAGENTO_ROOT: /var/www/html/web
@@ -48,7 +51,8 @@ nginx:
     - php
 
 php:
-  build: docker-images/magento_php
+  image: doodloo/magento_php:latest
+  # build: docker-images/magento_php
   links:
     - "cache:rediscache"
     - "sessions:redissession"
@@ -74,7 +78,8 @@ mysql:
     - ./data/mysql:/var/lib/mysql
 
 solr:
-  build: docker-images/magento_solr
+  image: doodloo/magento_solr:latest
+  # build: docker-images/magento_solr
 
 cache:
   image: redis:latest
