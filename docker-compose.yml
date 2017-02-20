@@ -14,7 +14,6 @@ installer:
   extra_hosts:
     - "dockerhost:$DOCKERHOST"
   environment:
-    DOMAIN: dockerized-magento.local
     MAGE_IS_DEVELOPER_MODE: 1
     MAGENTO_ROOT: /var/www/html/web
     MYSQL_HOST: mysql
@@ -28,6 +27,7 @@ installer:
     ADMIN_FRONTNAME: admin
     ADMIN_EMAIL: admin@example.com
     ENCRYPTIONKEY: 731aea833710535779fe8c7c49bc6c4d
+    DOMAIN: $DOMAIN
     SNAPPIC_API_HOST: $SNAPPIC_API_HOST
     SNAPPIC_ADMIN_URL: $SNAPPIC_ADMIN_URL
     SNAPPIC_STORE_ASSETS_HOST: $SNAPPIC_STORE_ASSETS_HOST
