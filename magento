@@ -134,6 +134,26 @@ enterContainer() {
   return 0
 }
 
+followContainer() {
+  local containerType="$1"
+  if [ -z "$containerType" ];
+  then
+    echo "No container type specified. Please specifiy a container type (e.g. php, installer, mysql, nginx, ...)." >&2
+    return 1
+  fi
+
+  local containerName=$(getContainerNameByType $containerType)
+  if [ -z "$containerName" ];
+  then
+    echo "Cannot determine the name of the container." >&2
+    return 1
+  fi
+
+  echo "Following $containerName..."
+  $DOCKER logs -f $containerName
+  return 0
+}
+
 printInfo() {
   local containerName=$(getContainerNameByType "nginx")
   local nginxHost=$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' $containerName)
@@ -141,7 +161,7 @@ printInfo() {
   echo "  ->   nginx is running on ${containerName} at ${nginxHost}.";
   echo "  ->   Snappic API Host: ${SNAPPIC_API_HOST}."
   echo "  ->   Snappic Front Assets Host: ${SNAPPIC_STORE_ASSETS_HOST}"
-  echo "  ->   Add \"${nginxHost} dockerized-magento.local\" to the php container hosts file."
+  echo "  ->   Add \"${nginxHost}      dockerized-magento.local\" to the php container hosts file."
 }
 
 start() {
@@ -188,6 +208,10 @@ enter() {
   enterContainer $parameters
 }
 
+follow() {
+  followContainer $parameters
+}
+
 destroy() {
   $DOCKERCOMPOSE stop
   $DOCKERCOMPOSE rm --force
@@ -225,6 +249,10 @@ case "$action" in
 
   enter)
   enter
+  ;;
+
+  follow)
+  follow
   ;;
 
   destroy)
