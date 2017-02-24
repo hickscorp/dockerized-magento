@@ -19,8 +19,8 @@ case "$1" in
         ;;
       "development")
         DOMAIN=dockerized-magento.local \
-        SNAPPIC_API_HOST=http://localhost:3000 \
-        SNAPPIC_ADMIN_URL=http://localhost:4200 \
+        SNAPPIC_API_HOST=http://dockerhost:3000 \
+        SNAPPIC_ADMIN_URL=http://dockerhost:4200 \
         SNAPPIC_STORE_ASSETS_HOST=http://store.staging.snappic.io \
         ./magento start
         ;;
@@ -35,6 +35,9 @@ case "$1" in
   ;;
 
   "destroy")
+    read -p "Are you sure? [y|N] " -n 1 -r; echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then echo "Aborting mission... Close call!"; exit 0; fi
+
     DOMAIN=none \
     SNAPPIC_API_HOST=none \
     SNAPPIC_ADMIN_URL=none \
