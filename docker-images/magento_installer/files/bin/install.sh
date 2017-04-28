@@ -32,8 +32,8 @@ then
 
   echo "Installing sample data: Database..."
   magerun --skip-root-check --root-dir="$MAGENTO_ROOT" db:create
-  magerun --skip-root-check --root-dir="$MAGENTO_ROOT" db:import "$MAGENTO_ROOT/*.sql"
-  rm "$MAGENTO_ROOT/*.sql"
+  magerun --skip-root-check --root-dir="$MAGENTO_ROOT" db:import "$MAGENTO_ROOT/magento_sample_data_for_1.9.1.0.sql"
+  rm "$MAGENTO_ROOT/magento_sample_data_for_1.9.1.0.sql"
   magerun --skip-root-check --root-dir="$MAGENTO_ROOT" cache:clean
   magerun --skip-root-check --root-dir="$MAGENTO_ROOT" index:reindex:all
 

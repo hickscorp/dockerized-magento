@@ -3,7 +3,7 @@ web:
   ports:
     - 80:80
   links:
-    - php:php
+    - php
   volumes:
     - ./data/logs:/var/log/nginx
     - ./data/config/ssl/cert.pem:/etc/nginx/ssl/cert.pem
