@@ -55,7 +55,7 @@ fi
 echo "Fixing filesystem permissions..."
 chmod -R go+rw $MAGENTO_ROOT
 
-echo "= - = - = - = - = - = - = - = - = - = - = - = - = - = - ="
+echo "-------------------------------------------------"
 echo "Frontend: http://$DOMAIN/ / Backend: http://$DOMAIN/admin"
 echo " - Username: ${ADMIN_USERNAME}"
 echo " - Password: ${ADMIN_PASSWORD}"

@@ -1,3 +1,4 @@
+env/overrides.env
 data/github_token.json
 data/logs
 data/mysql

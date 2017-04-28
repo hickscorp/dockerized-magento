@@ -1,44 +1,9 @@
-installer:
-  image: doodloo/magento_installer:latest
-  # build: docker-images/magento_installer
-  volumes:
-    - ./data/github_token.json:/root/.composer/auth.json
-  volumes_from:
-    - nginx
-  links:
-    - "cache:rediscache"
-    - "sessions:redissession"
-    - "fullpagecache:redisfullpagecache"
-    - "solr:solr"
-    - "mysql:mysql"
-  extra_hosts:
-    - "dockerhost:$DOCKERHOST"
-  environment:
-    MAGE_IS_DEVELOPER_MODE: 1
-    MAGENTO_ROOT: /var/www/html/web
-    MYSQL_HOST: mysql
-    MYSQL_DATABASE: magento
-    MYSQL_USER: root
-    MYSQL_PASSWORD: pw
-    ADMIN_USERNAME: admin
-    ADMIN_FIRSTNAME: Admin
-    ADMIN_LASTNAME: Inistrator
-    ADMIN_PASSWORD: password123
-    ADMIN_FRONTNAME: admin
-    ADMIN_EMAIL: admin@example.com
-    ENCRYPTIONKEY: 731aea833710535779fe8c7c49bc6c4d
-    DOMAIN: $DOMAIN
-    SNAPPIC_API_HOST: $SNAPPIC_API_HOST
-    SNAPPIC_ADMIN_URL: $SNAPPIC_ADMIN_URL
-    SNAPPIC_STORE_ASSETS_HOST: $SNAPPIC_STORE_ASSETS_HOST
-
-nginx:
+web:
   image: nginx:latest
   ports:
-    - "80:80"
-    - "443:443"
+    - 80:80
   links:
-    - "php"
+    - php:php
   volumes:
     - ./data/logs:/var/log/nginx
     - ./data/config/ssl/cert.pem:/etc/nginx/ssl/cert.pem
@@ -54,37 +19,47 @@ php:
   image: doodloo/magento_php:latest
   # build: docker-images/magento_php
   links:
-    - "cache:rediscache"
-    - "sessions:redissession"
-    - "fullpagecache:redisfullpagecache"
-    - "solr:solr"
-    - "mysql:mysql"
+    - cache
+    - solr
+    - mysql
   volumes:
     - ./data/root:/var/www/html
+    - ~/.composer/cache:/root/.composer/cache
   extra_hosts:
-    - "dockerhost:$DOCKERHOST"
-  environment:
-    MAGE_IS_DEVELOPER_MODE: 1
-    SNAPPIC_API_HOST: $SNAPPIC_API_HOST
-    SNAPPIC_ADMIN_URL: $SNAPPIC_ADMIN_URL
-    SNAPPIC_STORE_ASSETS_HOST: $SNAPPIC_STORE_ASSETS_HOST
+    - dockerhost:$DOCKERHOST
+  env_file:
+    - env/overrides.env
+
+installer:
+  image: doodloo/magento_installer:latest
+  # build: docker-images/magento_installer
+  volumes:
+    - ./data/github_token.json:/root/.composer/auth.json
+  volumes_from:
+    - php
+  links:
+    - cache
+    - solr
+    - mysql
+  extra_hosts:
+    - dockerhost:$DOCKERHOST
+  env_file:
+    - env/installer.env
+    - env/overrides.env
 
 mysql:
   image: mysql:5.5
   ports:
-    - "3306:3306"
-  environment:
-    MYSQL_ROOT_PASSWORD: pw
+    - 3306:3306
   volumes:
     - ./data/mysql:/var/lib/mysql
+  env_file:
+    - env/db.env
+    - env/overrides.env
 
 solr:
   image: doodloo/magento_solr:latest
   # build: docker-images/magento_solr
 
 cache:
-  image: redis:latest
-fullpagecache:
-  image: redis:latest
-sessions:
   image: redis:latest

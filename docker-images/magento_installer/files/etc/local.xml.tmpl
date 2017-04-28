@@ -28,7 +28,7 @@
         </resources>
         <session_save>db</session_save>
         <redis_session>
-            <host>redissession</host>
+            <host>cache</host>
             <port>6379</port>
             <password></password>
             <timeout>2.5</timeout>
@@ -46,7 +46,7 @@
         <cache>
             <backend>Mage_Cache_Backend_Redis</backend>
             <backend_options>
-                <server>rediscache</server>
+                <server>cache</server>
                 <port>6379</port>
                 <persistent></persistent>
                 <db>0</db>
